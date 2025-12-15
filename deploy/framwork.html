@@ -1,0 +1,1614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete FPGA AI Boards Guide 2025</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .board-card:hover {
+      transform: translateY(-5px);
+      transition: transform 0.3s ease;
+    }
+    
+    .ai-optimized {
+      border: 2px solid #10B981;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.1);
+    }
+    
+    .ai-good {
+      border: 2px solid #3B82F6;
+      box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1);
+    }
+    
+    .ai-basic {
+      border: 2px solid #F59E0B;
+      box-shadow: 0 10px 25px rgba(245, 158, 11, 0.1);
+    }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .vendor-badge-xilinx { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .vendor-badge-intel { background: linear-gradient(135deg, #0071c5, #005999); }
+    .vendor-badge-lattice { background: linear-gradient(135deg, #95a5a6, #7f8c8d); }
+    .vendor-badge-microchip { background: linear-gradient(135deg, #27ae60, #229954); }
+    .vendor-badge-efinix { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    .vendor-badge-awinic { background: linear-gradient(135deg, #e67e22, #d35400); }
+    
+    .board-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px 12px 0 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    }
+    
+    .image-placeholder {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px 12px 0 0;
+      color: #6b7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    
+    const SearchIcon = () => (
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    );
+
+    const FPGAGuide = () => {
+      const [searchTerm, setSearchTerm] = useState('');
+      const [filterVendor, setFilterVendor] = useState('All');
+      const [filterPrice, setFilterPrice] = useState('All');
+      const [filterAITier, setFilterAITier] = useState('All');
+      const [activeSection, setActiveSection] = useState('boards');
+
+      // Helper function to get image path - maps board names to actual image files
+      const getImagePath = (boardName) => {
+        const imageMap = {
+          'Agilex 5 FPGA Development Kit': 'Agilex 5 FPGA Development Kit.jpg',
+          'Agilex 7 FPGA Development Kit (F-Tile)': 'Agilex 7 FPGA Development Kit (F-Tile).jpg',
+          'Arria 10 GX FPGA Development Kit': 'Arria 10 GX FPGA Development Kit.png',
+          'Arria 10 SX SoC Development Kit': 'Arria 10 SX SoC Development Kit.jpg',
+          'Cyclone 10 GX FPGA Development Kit': 'Cyclone 10 GX FPGA Development Kit.jpg',
+          'Cyclone V SoC Development Kit (5CSXFC6)': 'Cyclone V SoC Development Kit (5CSXFC6).jpg',
+          'DE10-Nano': 'DE10-Nano.jpg',
+          'DE10-Standard': 'DE10-Standard.jpg',
+          'MAX 10 FPGA Evaluation Kit': 'MAX 10 FPGA Evaluation Kit.jpg',
+          'Terasic DE10-Advanced': 'Terasic DE10-Advanced.jpg',
+          'Kria KR260 Robotics Starter Kit': 'Kria KR260 Robotics Starter Kit.jpg',
+          'Kria KV260 Vision AI Starter Kit': 'Kria KV260 Vision AI Starter Kit.png',
+          'Kria SOM K26 (Standalone SOM)': 'Kria SOM K26 (Standalone SOM).jpg',
+          'Alveo U50 Data Center Accelerator': 'Alveo U50 Data Center Accelerator.jpg',
+          'Alveo U200 Accelerator': 'Alveo U200 Accelerator.jpg',
+          'Alveo U250 Accelerator': 'Alveo U250 Accelerator.png',
+          'Alveo U280 Accelerator': 'Alveo U280 Accelerator.jpg',
+          'ZCU102 Evaluation Kit': 'ZCU102 Evaluation Kit.jpg',
+          'ZCU104 Evaluation Kit': 'ZCU104 Evaluation Kit.jpg',
+          'ZCU106 Evaluation Kit': 'ZCU106 Evaluation Kit.jpg',
+          'VCK190 Evaluation Kit': 'VCK190 Evaluation Kit.jpg',
+          'VEK280 Evaluation Kit': 'VEK280 Evaluation Kit.png',
+          'PYNQ-Z1': 'PYNQ-Z1.png',
+          'PYNQ-Z2': 'PYNQ-Z2.jpg',
+          'Ultra96-V1': 'Ultra96-V1.png',
+          'Ultra96-V2': 'Ultra96-V2.jpg',
+          'Zybo Z7-10': 'Zybo Z7-10.jpg',
+          'Zybo Z7-20': 'Zybo Z7-20.jpg',
+          'MicroZed': 'MicroZed.png',
+          'PicoZed': 'PicoZed.png',
+          'CertusPro-NX Evaluation Board': 'CertusPro-NX Evaluation Board.jpg',
+          'CrossLink-NX Evaluation Board': 'CrossLink-NX Evaluation Board.png',
+          'ECP5 Versa Development Kit': 'ECP5 Versa Development Kit.png',
+          'iCE40 UltraPlus Breakout Board': 'iCE40 UltraPlus Breakout Board.jpg',
+          'MachXO3D Development Kit': 'MachXO3D Development Kit.png',
+          'PolarFire SoC Icicle Kit': 'PolarFire SoC Icicle Kit.jpg',
+          'SmartFusion2 SoC FPGA Kit': 'SmartFusion2 SoC FPGA Kit.png',
+          'IGLOO2 FPGA Evaluation Kit': 'IGLOO2 FPGA Evaluation Kit.jpg',
+          'RTG4 Development Kit': 'RTG4 Development Kit.png',
+          'MYD-C7Z010/20 Development Board': 'MYD-C7Z010 -20 Development Board.jpg',
+          'Trion T120 Development Kit': 'Trion T120 Development Kit.jpg',
+          'Trion T20 Development Kit': 'Trion T20 Development Kit.jpg',
+          'Tang Primer 20K': 'Tang Primer 20K.png',
+          'Sipeed Tang Nano': 'Sipeed Tang Nano.png',
+          'QuickFeather Development Kit': 'QuickFeather Development Kit.jpg',
+          'Z-turn Board': 'Z-turn Board.png',
+          'ODYSSEY X86J4105': 'ODYSSEY X86J4105.jpg',
+          'ReSpeaker FPGA': 'ReSpeaker FPGA.jpg',
+          'Stratix 10 DX FPGA Development Kit': 'Framework.png',
+          'Stratix 10 GX FPGA Development Kit': 'Framework.png',
+          'Stratix 10 SX SoC FPGA Development Kit': 'Framework.png',
+          'Titanium Ti60 Development Kit': 'Framework.png',
+          'QuickAI Development Kit': 'Framework.png',
+          'Coral Dev Board': 'Framework.png'
+        };
+        return imageMap[boardName] || 'Framework.png';
+      };
+
+      // Helper function to get framework image path
+      const getFrameworkImagePath = (frameworkName) => {
+        const imageMap = {
+          'Vitis AI': 'Vitis-Ai.png',
+          'PYNQ': 'PYNQ.png',
+          'OpenVINO': 'OpenVINO.png',
+          'Lattice sensAI': 'Lattice sensAI.png',
+          'TensorFlow Lite ': 'TensorFlow Lite.png',
+          'TVM with VTA': 'TVM with VTA.png',
+          'FINN': 'FINN.png',
+          'SensiML': 'sensiml.png',
+          'hls4ml': 'hls4ml.png'
+        };
+        return imageMap[frameworkName] || 'Framework.png';
+      };
+
+      const getFullImagePath = (imageName) => {
+        return imageName;
+      };
+
+      const handleImageError = (e, boardName) => {
+        const img = e.target;
+        console.log(`Image failed to load: ${img.src}`);
+        img.style.display = 'none';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'image-placeholder';
+        placeholder.innerHTML = `
+          <div class="text-center p-4">
+            <div class="w-16 h-16 rounded-full ${
+              boardName.includes('Xilinx') || boardName.includes('AMD') ? 'bg-red-500' :
+              boardName.includes('Intel') || boardName.includes('Altera') ? 'bg-blue-500' :
+              boardName.includes('Lattice') ? 'bg-gray-500' :
+              boardName.includes('Microchip') ? 'bg-green-500' :
+              boardName.includes('Efinix') ? 'bg-purple-500' :
+              'bg-orange-500'
+            } flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-microchip text-white text-2xl"></i>
+            </div>
+            <p class="text-gray-600 font-medium">${boardName.split('(')[0].trim()}</p>
+            <p class="text-xs text-gray-500 mt-2">FPGA Board</p>
+          </div>
+        `;
+        img.parentElement.appendChild(placeholder);
+      };
+
+      const handleFrameworkImageError = (e, frameworkName) => {
+        const img = e.target;
+        console.log(`Framework image failed to load: ${img.src}`);
+        img.style.display = 'none';
+        const placeholder = document.createElement('div');
+        placeholder.className = 'image-placeholder';
+        placeholder.innerHTML = `
+          <div class="text-center p-4">
+            <div class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mx-auto mb-3">
+              <i class="fas fa-code text-white text-2xl"></i>
+            </div>
+            <p class="text-gray-600 font-medium">${frameworkName}</p>
+            <p class="text-xs text-gray-500 mt-2">AI Framework</p>
+          </div>
+        `;
+        img.parentElement.appendChild(placeholder);
+      };
+
+      // COMPLETE LIST OF ALL FPGA BOARDS THAT SUPPORT AI (2025)
+      const fpgaBoards = [
+        // ==================== XILINX/AMD ====================
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Kria KV260 Vision AI Starter Kit',
+          chip: 'Zynq UltraScale+ XCK26',
+          price: '€280-370',
+          category: 'Vision AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'PYNQ', 'TensorFlow', 'PyTorch', 'ONNX'],
+          ram: '4 GB DDR4',
+          features: 'Vision accelerators, Ubuntu, Dual cameras',
+          ideal: 'Smart cameras, robotics vision'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Kria KR260 Robotics Starter Kit',
+          chip: 'Zynq UltraScale+ XCK26',
+          price: '€320-400',
+          category: 'Robotics AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'ROS 2', 'TensorFlow', 'PyTorch'],
+          ram: '4 GB DDR4',
+          features: 'ROS 2 optimized, Industrial interfaces',
+          ideal: 'Robotics, autonomous systems'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Kria SOM K26 (Standalone SOM)',
+          chip: 'Zynq UltraScale+ XCK26',
+          price: '€180-250',
+          category: 'Embedded AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'Yocto', 'TensorFlow Lite'],
+          ram: '4 GB DDR4',
+          features: 'SOM format, industrial temperature',
+          ideal: 'Custom embedded AI products'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'ZCU102 Evaluation Kit',
+          chip: 'Zynq UltraScale+ ZU9EG',
+          price: '€2,800-3,200',
+          category: 'High-End AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch', 'Caffe'],
+          ram: '4 GB DDR4',
+          features: 'PCIe Gen3, DisplayPort, 4K video',
+          ideal: 'Professional AI development'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'ZCU104 Evaluation Kit',
+          chip: 'Zynq UltraScale+ ZU7EV',
+          price: '€1,400-1,600',
+          category: 'Professional AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch', 'ONNX'],
+          ram: '4 GB DDR4',
+          features: '4K codec, DisplayPort',
+          ideal: 'Video analytics, AI inference'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'ZCU106 Evaluation Kit',
+          chip: 'Zynq UltraScale+ ZU7EV',
+          price: '€1,200-1,400',
+          category: 'Professional AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch'],
+          ram: '4 GB DDR4',
+          features: 'PCIe Gen2, HDMI 2.0',
+          ideal: 'Mid-range AI development'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'VCK190 Evaluation Kit',
+          chip: 'Versal AI Core VC1902',
+          price: '€3,700-4,200',
+          category: 'Premium AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch', 'ONNX'],
+          ram: '16 GB DDR4/LPDDR4',
+          features: 'AI Engines (400+ TOPS), PCIe Gen4',
+          ideal: 'Data center AI, research'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'VEK280 Evaluation Kit',
+          chip: 'Versal AI Edge VE2802',
+          price: '€2,300-2,700',
+          category: 'Edge AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow Lite', 'PyTorch Mobile'],
+          ram: '8 GB LPDDR4',
+          features: 'Low power, AI Engines',
+          ideal: 'Edge AI deployment'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Alveo U50 Data Center Accelerator',
+          chip: 'UltraScale+ VU35P',
+          price: '€1,850-2,100',
+          category: 'Data Center AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch'],
+          ram: '8 GB HBM2',
+          features: 'PCIe Gen4, 100G Ethernet',
+          ideal: 'Cloud AI inference'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Alveo U200 Accelerator',
+          chip: 'UltraScale+ VU9P',
+          price: '€4,600-5,200',
+          category: 'Data Center AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'Caffe'],
+          ram: '64 GB DDR4',
+          features: 'High bandwidth, PCIe Gen3',
+          ideal: 'Large-scale inference'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Alveo U250 Accelerator',
+          chip: 'UltraScale+ VU13P',
+          price: '€5,800-6,500',
+          category: 'Data Center AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch'],
+          ram: '64 GB DDR4',
+          features: 'High-performance AI',
+          ideal: 'Enterprise AI acceleration'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Alveo U280 Accelerator',
+          chip: 'UltraScale+ VU37P',
+          price: '€6,500-7,200',
+          category: 'Data Center AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['Vitis AI', 'TensorFlow', 'PyTorch'],
+          ram: '8 GB HBM2',
+          features: 'HBM2 memory, AI optimized',
+          ideal: 'Memory-intensive AI'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'PYNQ-Z1',
+          chip: 'Zynq-7010',
+          price: '€220-280',
+          category: 'Education AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['PYNQ', 'TensorFlow Lite', 'scikit-learn'],
+          ram: '512 MB DDR3',
+          features: 'Python productivity, Arduino',
+          ideal: 'AI education, prototyping'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'PYNQ-Z2',
+          chip: 'Zynq-7020',
+          price: '€275-320',
+          category: 'Education AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['PYNQ', 'TensorFlow', 'PyTorch'],
+          ram: '512 MB DDR3',
+          features: 'Jupyter notebooks, Python',
+          ideal: 'AI learning, rapid prototyping'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Ultra96-V1',
+          chip: 'Zynq UltraScale+ ZU3EG',
+          price: '€200-250',
+          category: 'Edge AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['PYNQ', 'Vitis AI', 'TensorFlow Lite'],
+          ram: '2 GB LPDDR4',
+          features: 'WiFi/BT, 96Boards',
+          ideal: 'Edge AI development'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Ultra96-V2',
+          chip: 'Zynq UltraScale+ ZU3EG',
+          price: '€230-280',
+          category: 'Edge AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['PYNQ', 'Vitis AI', 'TensorFlow Lite'],
+          ram: '2 GB LPDDR4',
+          features: 'USB-C, WiFi/BT',
+          ideal: 'Portable AI devices'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Zybo Z7-10',
+          chip: 'Zynq-7010',
+          price: '€230-280',
+          category: 'Education AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['PYNQ', 'TensorFlow Lite'],
+          ram: '512 MB DDR3',
+          features: 'HDMI, Pmod',
+          ideal: 'Learning AI on FPGA'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'Zybo Z7-20',
+          chip: 'Zynq-7020',
+          price: '€280-320',
+          category: 'Education AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['PYNQ', 'TensorFlow Lite', 'scikit-learn'],
+          ram: '1 GB DDR3',
+          features: 'HDMI, Audio',
+          ideal: 'Multimedia AI projects'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'MicroZed',
+          chip: 'Zynq-7010/7020',
+          price: '€180-250',
+          category: 'Embedded AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['Vitis AI', 'TensorFlow Lite Micro'],
+          ram: '512 MB DDR3',
+          features: 'Small form factor',
+          ideal: 'Space-constrained AI'
+        },
+        {
+          vendor: 'Xilinx/AMD',
+          name: 'PicoZed',
+          chip: 'Zynq-7000',
+          price: '€150-200',
+          category: 'Embedded AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['Vitis AI', 'TensorFlow Lite Micro'],
+          ram: '256 MB DDR3',
+          features: 'Ultra-small',
+          ideal: 'Tiny AI applications'
+        },
+
+
+        // ==================== INTEL/ALTERA ====================
+        {
+          vendor: 'Intel/Altera',
+          name: 'Agilex 7 FPGA Development Kit (F-Tile)',
+          chip: 'Agilex 7 AGFC',
+          price: '€3,500-4,000',
+          category: 'High-End AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['OpenVINO', 'TensorFlow', 'PyTorch'],
+          ram: 'DDR5 + HBM2e',
+          features: 'PCIe Gen5, 116G transceivers',
+          ideal: 'High-performance AI'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Agilex 5 FPGA Development Kit',
+          chip: 'Agilex 5 AGI',
+          price: '€2,800-3,200',
+          category: 'Edge AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['OpenVINO', 'TensorFlow', 'PyTorch'],
+          ram: 'DDR5',
+          features: 'AI-optimized fabric, PCIe Gen5',
+          ideal: 'Edge AI, 5G AI'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Stratix 10 DX FPGA Development Kit',
+          chip: 'Stratix 10 DX',
+          price: '€5,500-6,200',
+          category: 'Data Center AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['OpenVINO', 'TensorFlow', 'PyTorch'],
+          ram: 'HBM2',
+          features: 'Intel Xeon integration',
+          ideal: 'Data center AI acceleration'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Stratix 10 GX FPGA Development Kit',
+          chip: 'Stratix 10 GX',
+          price: '€4,600-5,200',
+          category: 'Data Center AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['OpenVINO', 'TensorFlow', 'PyTorch'],
+          ram: 'DDR4 + HBM2',
+          features: 'HyperFlex, 112G transceivers',
+          ideal: 'Network AI, HPC'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Stratix 10 SX SoC FPGA Development Kit',
+          chip: 'Stratix 10 SX',
+          price: '€5,000-5,600',
+          category: 'High-End AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['OpenVINO', 'TensorFlow', 'Caffe'],
+          ram: 'DDR4',
+          features: 'Quad-core ARM Cortex-A53',
+          ideal: 'SoC-based AI systems'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Arria 10 GX FPGA Development Kit',
+          chip: 'Arria 10 GX',
+          price: '€1,800-2,100',
+          category: 'Professional AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow'],
+          ram: 'DDR4',
+          features: 'Mid-range performance',
+          ideal: 'Industrial AI, vision'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Arria 10 SX SoC Development Kit',
+          chip: 'Arria 10 SX',
+          price: '€1,850-2,100',
+          category: 'Professional AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow', 'Caffe'],
+          ram: '4 GB DDR4',
+          features: 'Dual-core ARM Cortex-A9',
+          ideal: 'Embedded AI systems'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Cyclone 10 GX FPGA Development Kit',
+          chip: 'Cyclone 10 GX',
+          price: '€280-350',
+          category: 'Entry AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow Lite'],
+          ram: '2 GB DDR3',
+          features: 'Cost-optimized',
+          ideal: 'Cost-sensitive AI'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Cyclone V SoC Development Kit (5CSXFC6)',
+          chip: 'Cyclone V SoC',
+          price: '€200-280',
+          category: 'Education AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow Lite'],
+          ram: '1 GB DDR3',
+          features: 'ARM Cortex-A9',
+          ideal: 'Learning Intel FPGA AI'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'DE10-Nano',
+          chip: 'Cyclone V SoC',
+          price: '€120-150',
+          category: 'Education AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow Lite'],
+          ram: '1 GB DDR3',
+          features: 'HDMI, Arduino headers',
+          ideal: 'Beginner AI projects'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'DE10-Standard',
+          chip: 'Cyclone V',
+          price: '€185-230',
+          category: 'Education AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['OpenVINO'],
+          ram: '2 GB DDR3',
+          features: 'VGA, Audio, Ethernet',
+          ideal: 'University AI labs'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'Terasic DE10-Advanced',
+          chip: 'Arria 10 SX',
+          price: '€1,200-1,500',
+          category: 'Professional AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow'],
+          ram: '4 GB DDR4',
+          features: 'HDMI, PCIe',
+          ideal: 'Advanced AI development'
+        },
+        {
+          vendor: 'Intel/Altera',
+          name: 'MAX 10 FPGA Evaluation Kit',
+          chip: 'MAX 10',
+          price: '€80-120',
+          category: 'Ultra-Basic AI',
+          aiTier: 'Limited AI Support',
+          frameworks: ['Custom tinyML'],
+          ram: 'Embedded memory',
+          features: 'Very low cost',
+          ideal: 'Simple ML inference'
+        },
+
+        // ==================== LATTICE SEMICONDUCTOR ====================
+        {
+          vendor: 'Lattice',
+          name: 'CertusPro-NX Evaluation Board',
+          chip: 'CertusPro-NX',
+          price: '€370-420',
+          category: 'Edge AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['Lattice sensAI', 'TensorFlow Lite'],
+          ram: '2 GB LPDDR4',
+          features: 'MIPI CSI-2, low power',
+          ideal: 'Always-on vision AI'
+        },
+        {
+          vendor: 'Lattice',
+          name: 'CrossLink-NX Evaluation Board',
+          chip: 'CrossLink-NX',
+          price: '€200-250',
+          category: 'Vision AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['Lattice sensAI', 'TensorFlow Lite'],
+          ram: '512 MB LPDDR4',
+          features: 'MIPI D-PHY, small form',
+          ideal: 'Camera AI, sensor fusion'
+        },
+        {
+          vendor: 'Lattice',
+          name: 'ECP5 Versa Development Kit',
+          chip: 'ECP5',
+          price: '€280-320',
+          category: 'Mid-Range AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['Lattice sensAI', 'TensorFlow Lite'],
+          ram: '1 GB DDR3',
+          features: 'PCIe, SATA, USB 3.0',
+          ideal: 'Industrial IoT AI'
+        },
+        {
+          vendor: 'Lattice',
+          name: 'iCE40 UltraPlus Breakout Board',
+          chip: 'iCE40 UltraPlus',
+          price: '€45-60',
+          category: 'Ultra Low Power AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['Lattice sensAI', 'TensorFlow Lite Micro'],
+          ram: 'Embedded SRAM',
+          features: '<1mW, tiny form',
+          ideal: 'Battery-powered AI'
+        },
+        {
+          vendor: 'Lattice',
+          name: 'MachXO3D Development Kit',
+          chip: 'MachXO3D',
+          price: '€150-180',
+          category: 'Secure AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['Lattice sensAI'],
+          ram: 'Embedded memory',
+          features: 'Hardware security',
+          ideal: 'Secure AI applications'
+        },
+
+        // ==================== MICROCHIP (MICROSEMI) ====================
+        {
+          vendor: 'Microchip',
+          name: 'PolarFire SoC Icicle Kit',
+          chip: 'PolarFire SoC',
+          price: '€450-550',
+          category: 'Secure AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['TensorFlow Lite', 'ONNX Runtime'],
+          ram: '2 GB DDR4',
+          features: 'RISC-V cores, secure boot',
+          ideal: 'Secure edge AI'
+        },
+        {
+          vendor: 'Microchip',
+          name: 'SmartFusion2 SoC FPGA Kit',
+          chip: 'SmartFusion2',
+          price: '€200-280',
+          category: 'Industrial AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['TensorFlow Lite Micro'],
+          ram: '256 MB DDR3',
+          features: 'ARM Cortex-M3',
+          ideal: 'Industrial control with AI'
+        },
+        {
+          vendor: 'Microchip',
+          name: 'IGLOO2 FPGA Evaluation Kit',
+          chip: 'IGLOO2',
+          price: '€150-200',
+          category: 'Low Power AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['TensorFlow Lite Micro'],
+          ram: '128 MB DDR3',
+          features: 'Flash-based, low power',
+          ideal: 'Low-power embedded AI'
+        },
+        {
+          vendor: 'Microchip',
+          name: 'RTG4 Development Kit',
+          chip: 'RTG4',
+          price: '€800-1,000',
+          category: 'Radiation-Tolerant AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['TensorFlow Lite Micro'],
+          ram: '512 MB DDR3',
+          features: 'Radiation tolerant',
+          ideal: 'Space/Aerospace AI'
+        },
+
+        // ==================== EFINIX ====================
+        {
+          vendor: 'Efinix',
+          name: 'Trion T120 Development Kit',
+          chip: 'Trion T120',
+          price: '€280-320',
+          category: 'Emerging AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['TensorFlow Lite', 'RISC-V AI'],
+          ram: 'DDR3',
+          features: 'RISC-V soft cores',
+          ideal: 'Custom AI processors'
+        },
+        {
+          vendor: 'Efinix',
+          name: 'Trion T20 Development Kit',
+          chip: 'Trion T20',
+          price: '€150-200',
+          category: 'Entry AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['TensorFlow Lite Micro'],
+          ram: 'Embedded memory',
+          features: 'Very small',
+          ideal: 'Minimalist AI'
+        },
+        {
+          vendor: 'Efinix',
+          name: 'Titanium Ti60 Development Kit',
+          chip: 'Titanium Ti60',
+          price: '€500-600',
+          category: 'Mid-Range AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['TensorFlow Lite', 'RISC-V AI'],
+          ram: 'DDR4',
+          features: 'High performance',
+          ideal: 'Mid-range AI acceleration'
+        },
+
+        // ==================== GOWIN ====================
+        {
+          vendor: 'Gowin',
+          name: 'Tang Primer 20K',
+          chip: 'GW2A',
+          price: '€30-50',
+          category: 'Entry AI',
+          aiTier: 'Limited AI Support',
+          frameworks: ['Custom RTL'],
+          ram: 'Embedded',
+          features: 'Very low cost',
+          ideal: 'Simple AI experiments'
+        },
+        {
+          vendor: 'Gowin',
+          name: 'Sipeed Tang Nano',
+          chip: 'GW1N',
+          price: '€15-25',
+          category: 'Ultra-Budget AI',
+          aiTier: 'Minimal AI Support',
+          frameworks: ['Custom tinyML'],
+          ram: 'Very limited',
+          features: 'Tiny size',
+          ideal: 'Basic ML concepts'
+        },
+
+        // ==================== QUICKLOGIC ====================
+        {
+          vendor: 'QuickLogic',
+          name: 'QuickFeather Development Kit',
+          chip: 'EOS S3',
+          price: '€40-60',
+          category: 'Ultra Low Power AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['TensorFlow Lite Micro', 'SensiML'],
+          ram: 'Embedded MRAM',
+          features: 'Extreme low power',
+          ideal: 'Battery AI, sensor AI'
+        },
+        {
+          vendor: 'QuickLogic',
+          name: 'QuickAI Development Kit',
+          chip: 'EOS S3',
+          price: '€80-120',
+          category: 'Audio AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['TensorFlow Lite Micro'],
+          ram: 'Embedded MRAM',
+          features: 'Audio processing',
+          ideal: 'Voice AI, audio analytics'
+        },
+
+        // ==================== MYIR ====================
+        {
+          vendor: 'MYIR',
+          name: 'Z-turn Board',
+          chip: 'Zynq-7010/7020',
+          price: '€150-200',
+          category: 'Budget AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['PYNQ', 'TensorFlow Lite'],
+          ram: '512 MB DDR3',
+          features: 'Cost-effective',
+          ideal: 'Budget AI development'
+        },
+        {
+          vendor: 'MYIR',
+          name: 'MYD-C7Z010/20 Development Board',
+          chip: 'Zynq-7010/7020',
+          price: '€200-250',
+          category: 'Embedded AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['Vitis AI'],
+          ram: '512 MB DDR3',
+          features: 'Industrial interfaces',
+          ideal: 'Industrial AI'
+        },
+
+        // ==================== SEEED STUDIO ====================
+        {
+          vendor: 'Seeed Studio',
+          name: 'ODYSSEY X86J4105',
+          chip: 'Intel Celeron + Cyclone 10',
+          price: '€200-250',
+          category: 'Hybrid AI',
+          aiTier: 'Good AI Support',
+          frameworks: ['OpenVINO', 'TensorFlow'],
+          ram: '8 GB DDR4',
+          features: 'x86 + FPGA hybrid',
+          ideal: 'Hybrid computing AI'
+        },
+        {
+          vendor: 'Seeed Studio',
+          name: 'ReSpeaker FPGA',
+          chip: 'Xilinx Spartan-6',
+          price: '€80-120',
+          category: 'Audio AI',
+          aiTier: 'Basic AI Support',
+          frameworks: ['Custom audio ML'],
+          ram: 'Limited',
+          features: 'Microphone array',
+          ideal: 'Audio AI projects'
+        },
+
+        // ==================== GOOGLE CORAL ====================
+        {
+          vendor: 'Google',
+          name: 'Coral Dev Board',
+          chip: 'Google Edge TPU + Cyclone 10',
+          price: '€150-200',
+          category: 'Edge AI',
+          aiTier: 'AI-Optimized',
+          frameworks: ['TensorFlow Lite'],
+          ram: '1 GB DDR4',
+          features: 'Edge TPU + FPGA',
+          ideal: 'Edge AI with FPGA flexibility'
+        }
+      ];
+
+ // Add image property to each board
+const boardsWithImages = fpgaBoards.map(board => ({
+  ...board,
+  image: getImagePath(board.name)
+}));
+
+const frameworks = [
+  {
+    name: 'Vitis AI',
+    vendor: 'Xilinx/AMD',
+    type: 'Complete AI Stack',
+    mlFrameworks: ['TensorFlow', 'PyTorch', 'Caffe', 'ONNX', 'Darknet'],
+    boards: 'All Xilinx/AMD boards',
+    features: ['DPU IP cores', 'AI Optimizer', 'AI Quantizer', 'AI Compiler', 'AI Profiler'],
+    difficulty: 'Intermediate',
+    bestFor: 'Xilinx/AMD ecosystem AI deployment',
+    image: getFrameworkImagePath('Vitis AI')
+  },
+  {
+    name: 'PYNQ',
+    vendor: 'Xilinx/AMD',
+    type: 'Python Productivity',
+    mlFrameworks: ['TensorFlow Lite', 'PyTorch', 'scikit-learn', 'ONNX Runtime'],
+    boards: 'Zynq and Zynq UltraScale+',
+    features: ['Jupyter notebooks', 'Python overlays', 'High-level APIs', 'Large library'],
+    difficulty: 'Beginner',
+    bestFor: 'Education, rapid prototyping, research',
+    image: getFrameworkImagePath('PYNQ')
+  },
+  {
+    name: 'OpenVINO',
+    vendor: 'Intel',
+    type: 'Cross-Platform Toolkit',
+    mlFrameworks: ['TensorFlow', 'PyTorch', 'ONNX', 'Caffe', 'MXNet'],
+    boards: 'All Intel FPGAs',
+    features: ['Model Optimizer', 'Inference Engine', 'Deep Learning Workbench', 'OMZ'],
+    difficulty: 'Beginner to Intermediate',
+    bestFor: 'Intel FPGA AI, edge deployment',
+    image: getFrameworkImagePath('OpenVINO')
+  },
+  {
+    name: 'Lattice sensAI',
+    vendor: 'Lattice',
+    type: 'Ultra-Low Power AI',
+    mlFrameworks: ['TensorFlow Lite', 'Keras', 'PyTorch Mobile'],
+    boards: 'All Lattice FPGAs',
+    features: ['<1mW operation', 'CNN accelerators', 'Model compression', 'Always-on'],
+    difficulty: 'Intermediate',
+    bestFor: 'Battery-powered, always-on AI',
+    image: getFrameworkImagePath('Lattice sensAI')
+  },
+  {
+    name: 'TensorFlow Lite ',
+    vendor: 'Google',
+    type: 'Embedded ML Framework',
+    mlFrameworks: ['TensorFlow'],
+    boards: 'All FPGAs with soft CPUs',
+    features: ['Sub-100KB models', 'Hardware acceleration', 'CMSIS-NN', 'TFLM'],
+    difficulty: 'Beginner',
+    bestFor: 'Microcontroller-class FPGA AI',
+    image: getFrameworkImagePath('TensorFlow Lite ')
+  },
+  {
+    name: 'TVM with VTA',
+    vendor: 'Apache',
+    type: 'AI Compiler Stack',
+    mlFrameworks: ['TensorFlow', 'PyTorch', 'MXNet', 'ONNX', 'Keras'],
+    boards: 'All FPGAs',
+    features: ['Auto-tuning', 'Hardware optimization', 'Custom accelerators', 'MLIR'],
+    difficulty: 'Advanced',
+    bestFor: 'Custom AI accelerators, research',
+    image: getFrameworkImagePath('TVM with VTA')
+  },
+  {
+    name: 'FINN',
+    vendor: 'Xilinx Research',
+    type: 'Quantized Neural Networks',
+    mlFrameworks: ['Brevitas (PyTorch)'],
+    boards: 'Xilinx FPGAs',
+    features: ['1-2 bit quantization', 'Dataflow architecture', 'High throughput'],
+    difficulty: 'Advanced',
+    bestFor: 'Extreme efficiency, binary networks',
+    image: getFrameworkImagePath('FINN')
+  },
+  {
+    name: 'SensiML',
+    vendor: 'QuickLogic',
+    type: 'AutoML for Sensors',
+    mlFrameworks: ['Custom', 'TensorFlow Lite'],
+    boards: 'QuickLogic, Lattice, others',
+    features: ['Auto-labeling', 'Model generation', 'Sensor optimization'],
+    difficulty: 'Intermediate',
+    bestFor: 'Sensor AI, IoT devices',
+    image: getFrameworkImagePath('SensiML')
+  },
+  {
+    name: 'hls4ml',
+    vendor: 'CERN/FNAL',
+    type: 'High-Level Synthesis for ML',
+    mlFrameworks: ['TensorFlow', 'PyTorch', 'Keras'],
+    boards: 'All FPGAs with HLS',
+    features: ['Direct model conversion', 'High-level C++', 'Physics optimized'],
+    difficulty: 'Intermediate',
+    bestFor: 'Scientific computing, HEP',
+    image: getFrameworkImagePath('hls4ml')
+  }
+];
+      const projectIdeas = [
+        {
+          title: "Real-time Object Detection Camera",
+          difficulty: "Beginner",
+          board: "PYNQ-Z2 or Kria KV260",
+          timeframe: "2-3 weeks",
+          description: "Build a smart camera that detects objects in real-time using pre-trained models",
+          steps: [
+            "Setup PYNQ or Vitis AI environment",
+            "Load MobileNetV2 or YOLO model",
+            "Connect USB/CSI camera",
+            "Process video stream at 15-30 FPS",
+            "Display results with bounding boxes"
+          ],
+          skills: ["Python", "OpenCV", "Neural network inference"]
+        },
+        {
+          title: "Voice Command System",
+          difficulty: "Beginner",
+          board: "Ultra96-V2 or PYNQ-Z2",
+          timeframe: "3-4 weeks",
+          description: "Create a system that responds to voice commands using keyword spotting",
+          steps: [
+            "Collect/use audio dataset",
+            "Train CNN for 5-10 keywords",
+            "Implement real-time audio capture",
+            "Deploy on FPGA with TensorFlow Lite",
+            "Add LED feedback for commands"
+          ],
+          skills: ["Audio processing", "CNN training", "Real-time systems"]
+        },
+        {
+          title: "Gesture-controlled Interface",
+          difficulty: "Intermediate",
+          board: "Kria KV260 or Zybo Z7",
+          timeframe: "4-6 weeks",
+          description: "Control devices using hand gestures recognized by camera",
+          steps: [
+            "Setup camera pipeline",
+            "Train gesture recognition (5 gestures)",
+            "Implement real-time inference",
+            "Connect to IoT devices/robotics",
+            "Create control interface"
+          ],
+          skills: ["Computer vision", "Control systems", "Hardware interfacing"]
+        },
+        {
+          title: "Predictive Maintenance System",
+          difficulty: "Intermediate",
+          board: "Lattice ECP5 or Intel Agilex 5",
+          timeframe: "5-7 weeks",
+          description: "Monitor equipment and predict failures using vibration sensors",
+          steps: [
+            "Collect sensor data from motors",
+            "Train anomaly detection model",
+            "Deploy on low-power FPGA",
+            "Implement real-time monitoring",
+            "Create alert system"
+          ],
+          skills: ["Signal processing", "Time-series analysis", "Embedded systems"]
+        },
+        {
+          title: "Autonomous Mini Vehicle",
+          difficulty: "Advanced",
+          board: "Kria KV260 or ZCU104",
+          timeframe: "8-12 weeks",
+          description: "Build a small autonomous vehicle that navigates using AI",
+          steps: [
+            "Assemble vehicle chassis",
+            "Implement camera-based navigation",
+            "Add sensor fusion (ultrasonic/IR)",
+            "Train reinforcement learning policy",
+            "Deploy complete system"
+          ],
+          skills: ["Robotics", "Reinforcement learning", "Sensor fusion"]
+        },
+        {
+          title: "AI-powered Security System",
+          difficulty: "Intermediate",
+          board: "Kria KV260 or Coral Dev Board",
+          timeframe: "4-6 weeks",
+          description: "Smart security system with face recognition and intrusion detection",
+          steps: [
+            "Setup multiple camera inputs",
+            "Implement face detection/recognition",
+            "Add motion detection algorithms",
+            "Create alert/notification system",
+            "Add cloud connectivity"
+          ],
+          skills: ["Face recognition", "Multi-camera systems", "Cloud integration"]
+        },
+        {
+          title: "Smart Agriculture Monitor",
+          difficulty: "Intermediate",
+          board: "Lattice iCE40 or QuickFeather",
+          timeframe: "5-7 weeks",
+          description: "Monitor crop health using sensors and AI on ultra-low-power FPGA",
+          steps: [
+            "Deploy soil/weather sensors",
+            "Collect environmental data",
+            "Train models for crop health",
+            "Implement solar-powered operation",
+            "Add LoRa wireless connectivity"
+          ],
+          skills: ["IoT systems", "Low-power design", "Wireless communication"]
+        },
+        {
+          title: "Medical Image Analysis",
+          difficulty: "Advanced",
+          board: "Alveo U50 or VCK190",
+          timeframe: "8-10 weeks",
+          description: "Accelerate medical image analysis (X-ray, MRI) using FPGA",
+          steps: [
+            "Prepare medical image dataset",
+            "Train segmentation/classification models",
+            "Optimize for FPGA inference",
+            "Implement DICOM compatibility",
+            "Create web interface for doctors"
+          ],
+          skills: ["Medical imaging", "High-performance computing", "Web interfaces"]
+        }
+      ];
+
+      // Filter boards
+      const filteredBoards = boardsWithImages.filter(board => {
+        const matchesSearch = board.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                             board.chip.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesVendor = filterVendor === 'All' || board.vendor === filterVendor;
+        
+        const priceNum = parseInt(board.price.replace(/[^0-9]/g, ''));
+        const matchesPrice = filterPrice === 'All' || 
+                            (filterPrice === 'Budget' && priceNum < 300) ||
+                            (filterPrice === 'Mid' && priceNum >= 300 && priceNum < 2000) ||
+                            (filterPrice === 'Premium' && priceNum >= 2000);
+        
+        const matchesAITier = filterAITier === 'All' || board.aiTier === filterAITier;
+        
+        return matchesSearch && matchesVendor && matchesPrice && matchesAITier;
+      });
+
+      const vendors = ['All', ...new Set(boardsWithImages.map(b => b.vendor))];
+      const aiTiers = ['All', ...new Set(boardsWithImages.map(b => b.aiTier))];
+
+      // Section Navigation
+      const SectionTabs = () => (
+        <div className="flex border-b border-gray-200 mb-6">
+          <button
+            className={`flex-1 py-3 text-center font-medium text-lg ${activeSection === 'boards' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+            onClick={() => setActiveSection('boards')}
+          >
+            <i className="fas fa-microchip mr-2"></i>
+            FPGA Boards ({boardsWithImages.length})
+          </button>
+          <button
+            className={`flex-1 py-3 text-center font-medium text-lg ${activeSection === 'frameworks' ? 'text-green-600 border-b-2 border-green-600' : 'text-gray-500 hover:text-gray-700'}`}
+            onClick={() => setActiveSection('frameworks')}
+          >
+            <i className="fas fa-code mr-2"></i>
+            AI Frameworks ({frameworks.length})
+          </button>
+        </div>
+      );
+
+      // Frameworks Display Component
+const FrameworksSection = () => (
+  <div className="mb-12">
+    <h2 className="text-3xl font-bold text-gray-800 mb-6">
+      <i className="fas fa-code text-green-600 mr-3"></i>
+      AI Frameworks for FPGA Development
+    </h2>
+    
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {frameworks.map((framework, idx) => (
+        <div key={idx} className="bg-white rounded-2xl shadow-lg overflow-hidden border-2 border-green-100 hover:shadow-xl transition board-card">
+          {/* Framework Image */}
+          <div className="relative">
+            <img 
+              src={framework.image} 
+              alt={framework.name}
+              className="board-image"
+              onError={(e) => handleFrameworkImageError(e, framework.name)}
+            />
+            <div className="absolute top-3 right-3">
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                framework.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
+                framework.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                'bg-red-100 text-red-800'
+              }`}>
+                {framework.difficulty}
+              </span>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            {/* Header */}
+            <div className="mb-4">
+              <h3 className="text-xl font-bold text-gray-800 mb-1">{framework.name}</h3>
+              <span className="text-sm text-gray-600">{framework.vendor}</span>
+            </div>
+            
+            {/* Type */}
+            <div className="mb-3">
+              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded text-sm font-semibold">
+                {framework.type}
+              </span>
+            </div>
+            
+            {/* Details */}
+            <div className="space-y-3 mb-4">
+              <div>
+                <p className="text-sm font-semibold text-gray-700 mb-1">ML Frameworks:</p>
+                <div className="flex flex-wrap gap-2">
+                  {framework.mlFrameworks.map((fw, i) => (
+                    <span key={i} className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                      {fw}
+                    </span>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-semibold text-gray-700 mb-1">Key Features:</p>
+                <div className="flex flex-wrap gap-2">
+                  {framework.features.slice(0, 3).map((feature, i) => (
+                    <span key={i} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                      {feature}
+                    </span>
+                  ))}
+                  {framework.features.length > 3 && (
+                    <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                      +{framework.features.length - 3} more
+                    </span>
+                  )}
+                </div>
+              </div>
+              
+              <div>
+                <p className="text-sm font-semibold text-gray-700 mb-1">Compatible Boards:</p>
+                <p className="text-sm text-gray-600">{framework.boards}</p>
+              </div>
+            </div>
+            
+            {/* Best For */}
+            <div className="bg-green-50 p-3 rounded-lg">
+              <p className="text-sm font-semibold text-green-800">
+                <i className="fas fa-star mr-2"></i>
+                Best for: {framework.bestFor}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+      // Board Card Component with Image
+      const BoardCard = ({ board }) => (
+        <div className={`bg-white rounded-2xl shadow-lg overflow-hidden board-card ${
+          board.aiTier === 'AI-Optimized' ? 'ai-optimized' :
+          board.aiTier === 'Good AI Support' ? 'ai-good' : 'ai-basic'
+        }`}>
+          {/* Image Section */}
+          <div className="relative">
+            <img 
+              src={board.image} 
+              alt={board.name}
+              className="board-image"
+              onError={(e) => handleImageError(e, board.name)}
+            />
+            <div className="absolute top-3 left-3">
+              <span className={`text-xs font-bold px-3 py-1 rounded-full ${
+                board.aiTier === 'AI-Optimized' ? 'bg-green-100 text-green-800' :
+                board.aiTier === 'Good AI Support' ? 'bg-blue-100 text-blue-800' :
+                'bg-yellow-100 text-yellow-800'
+              }`}>
+                {board.aiTier}
+              </span>
+            </div>
+            <div className="absolute top-3 right-3">
+              <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+                {board.price}
+              </span>
+            </div>
+          </div>
+          
+          <div className="p-6">
+            {/* Board Name */}
+            <h3 className="text-lg font-bold text-gray-800 mb-2">{board.name}</h3>
+            
+            {/* Vendor */}
+            <div className="mb-3">
+              <span className={`text-xs font-semibold px-3 py-1 rounded ${
+                board.vendor === 'Xilinx/AMD' ? 'bg-red-100 text-red-800' :
+                board.vendor === 'Intel/Altera' ? 'bg-blue-100 text-blue-800' :
+                board.vendor === 'Lattice' ? 'bg-gray-100 text-gray-800' :
+                'bg-purple-100 text-purple-800'
+              }`}>
+                {board.vendor}
+              </span>
+            </div>
+            
+            {/* Details */}
+            <div className="space-y-2 mb-4">
+              <p className="text-sm text-gray-700"><strong>Chip:</strong> {board.chip}</p>
+              <p className="text-sm text-gray-700"><strong>Category:</strong> {board.category}</p>
+              <p className="text-sm text-gray-700"><strong>RAM:</strong> {board.ram}</p>
+              <p className="text-sm text-gray-700"><strong>Features:</strong> {board.features}</p>
+            </div>
+            
+            {/* Frameworks */}
+            <div className="mb-4">
+              <p className="text-sm font-semibold text-gray-700 mb-2">AI Frameworks:</p>
+              <div className="flex flex-wrap gap-2">
+                {board.frameworks.slice(0, 3).map((fw, i) => (
+                  <span key={i} className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                    {fw}
+                  </span>
+                ))}
+                {board.frameworks.length > 3 && (
+                  <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                    +{board.frameworks.length - 3} more
+                  </span>
+                )}
+              </div>
+            </div>
+            
+            {/* Ideal Use */}
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <p className="text-sm font-semibold text-blue-800">
+                <i className="fas fa-lightbulb mr-2"></i>
+                {board.ideal}
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+
+      // Boards Display Component
+      const BoardsSection = () => (
+        <>
+          {/* Boards Grid */}
+          <div className="mb-12">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
+              <i className="fas fa-list-alt text-blue-600 mr-3"></i>
+              All AI-Capable FPGA Boards (Alphabetical)
+            </h2>
+            
+            {filteredBoards.length === 0 ? (
+              <div className="bg-white rounded-2xl shadow-lg p-12 text-center">
+                <i className="fas fa-search text-gray-300 text-6xl mb-4"></i>
+                <h3 className="text-2xl font-bold text-gray-700 mb-2">No boards found</h3>
+                <p className="text-gray-500 mb-6">Try different search or filter criteria</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredBoards.map((board, idx) => (
+                  <BoardCard key={idx} board={board} />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Project Ideas */}
+          <div className="mb-12 bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-xl p-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">
+              <i className="fas fa-rocket text-purple-600 mr-3"></i>
+              FPGA AI Project Ideas for All Levels
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {projectIdeas.map((project, idx) => (
+                <div key={idx} className="bg-white rounded-xl shadow-lg p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <h3 className="text-xl font-bold text-gray-800">{project.title}</h3>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      project.difficulty === 'Beginner' ? 'bg-green-100 text-green-800' :
+                      project.difficulty === 'Intermediate' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {project.difficulty}
+                    </span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <i className="fas fa-microchip mr-2"></i>
+                      <span><strong>Board:</strong> {project.board}</span>
+                    </div>
+                    
+                    <div className="flex items-center text-sm text-gray-600">
+                      <i className="fas fa-clock mr-2"></i>
+                      <span><strong>Time:</strong> {project.timeframe}</span>
+                    </div>
+                    
+                    <p className="text-gray-700">{project.description}</p>
+                    
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-2">Skills:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {project.skills.map((skill, i) => (
+                          <span key={i} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
+      );
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 p-4 md:p-6">
+          <div className="max-w-7xl mx-auto">
+            {/* Header */}
+            <div className="text-center mb-10">
+              <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-3">
+                <i className="fas fa-microchip text-blue-600 mr-3"></i>
+                Complete FPGA AI Boards Guide 2025
+              </h1>
+              <p className="text-lg md:text-xl text-gray-600 mb-2">
+                Every FPGA Board That Supports AI/ML - Complete Reference
+              </p>
+              <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm">
+                <i className="fas fa-database mr-2"></i>
+                {boardsWithImages.length} AI-Capable FPGA Boards Documented
+              </div>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-white rounded-xl shadow p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{boardsWithImages.filter(b => b.vendor === 'Xilinx/AMD').length}</div>
+                <div className="text-sm text-gray-600">Xilinx/AMD Boards</div>
+              </div>
+              <div className="bg-white rounded-xl shadow p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{boardsWithImages.filter(b => b.vendor === 'Intel/Altera').length}</div>
+                <div className="text-sm text-gray-600">Intel/Altera Boards</div>
+              </div>
+              <div className="bg-white rounded-xl shadow p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{boardsWithImages.filter(b => b.aiTier === 'AI-Optimized').length}</div>
+                <div className="text-sm text-gray-600">AI-Optimized Boards</div>
+              </div>
+              <div className="bg-white rounded-xl shadow p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{frameworks.length}</div>
+                <div className="text-sm text-gray-600">AI Frameworks</div>
+              </div>
+            </div>
+
+            {/* Filters - Only show for boards section */}
+            {activeSection === 'boards' && (
+              <div className="bg-white rounded-2xl shadow-xl p-6 mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <SearchIcon />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search all AI FPGA boards..."
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <i className="fas fa-building mr-1"></i> Vendor
+                    </label>
+                    <select
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={filterVendor}
+                      onChange={(e) => setFilterVendor(e.target.value)}
+                    >
+                      {vendors.map(v => (
+                        <option key={v} value={v}>{v}</option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <i className="fas fa-euro-sign mr-1"></i> Price Range
+                    </label>
+                    <select
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={filterPrice}
+                      onChange={(e) => setFilterPrice(e.target.value)}
+                    >
+                      <option value="All">All Prices</option>
+                      <option value="Budget">Budget (&lt; €300)</option>
+                      <option value="Mid">Mid (€300 - €2,000)</option>
+                      <option value="Premium">Premium (&gt; €2,000)</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      <i className="fas fa-layer-group mr-1"></i> AI Capability
+                    </label>
+                    <select
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      value={filterAITier}
+                      onChange={(e) => setFilterAITier(e.target.value)}
+                    >
+                      {aiTiers.map(tier => (
+                        <option key={tier} value={tier}>{tier}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="mt-4 flex justify-between items-center">
+                  <p className="text-gray-600">
+                    Showing <span className="font-bold text-blue-600">{filteredBoards.length}</span> of {boardsWithImages.length} AI-capable FPGA boards
+                  </p>
+                  <button 
+                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition"
+                    onClick={() => {
+                      setSearchTerm('');
+                      setFilterVendor('All');
+                      setFilterPrice('All');
+                      setFilterAITier('All');
+                    }}
+                  >
+                    <i className="fas fa-redo mr-2"></i> Reset Filters
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Vendor Legend - Only show for boards section */}
+            {activeSection === 'boards' && (
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">FPGA Vendors with AI Support:</h3>
+                <div className="flex flex-wrap gap-3">
+                  <span className="vendor-badge-xilinx text-white px-4 py-2 rounded-lg">Xilinx/AMD ({boardsWithImages.filter(b => b.vendor === 'Xilinx/AMD').length} boards)</span>
+                  <span className="vendor-badge-intel text-white px-4 py-2 rounded-lg">Intel/Altera ({boardsWithImages.filter(b => b.vendor === 'Intel/Altera').length} boards)</span>
+                  <span className="vendor-badge-lattice text-white px-4 py-2 rounded-lg">Lattice ({boardsWithImages.filter(b => b.vendor === 'Lattice').length} boards)</span>
+                  <span className="vendor-badge-microchip text-white px-4 py-2 rounded-lg">Microchip ({boardsWithImages.filter(b => b.vendor === 'Microchip').length} boards)</span>
+                  <span className="vendor-badge-efinix text-white px-4 py-2 rounded-lg">Efinix ({boardsWithImages.filter(b => b.vendor === 'Efinix').length} boards)</span>
+                  <span className="vendor-badge-awinic text-white px-4 py-2 rounded-lg">Others ({boardsWithImages.filter(b => !['Xilinx/AMD','Intel/Altera','Lattice','Microchip','Efinix'].includes(b.vendor)).length} boards)</span>
+                </div>
+              </div>
+            )}
+
+            {/* Section Navigation */}
+            <SectionTabs />
+
+            {/* Content based on active section */}
+            {activeSection === 'boards' ? <BoardsSection /> : <FrameworksSection />}
+
+            {/* Getting Started */}
+            <div className="mb-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-2xl p-8 text-white">
+              <h2 className="text-3xl font-bold mb-4">
+                <i className="fas fa-play-circle mr-3"></i>
+                How to Get Started with FPGA AI in 2025
+              </h2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-white/20 backdrop-blur-sm p-6 rounded-xl">
+                  <h3 className="text-xl font-bold mb-3">For Complete Beginners</h3>
+                  <ol className="text-sm space-y-2">
+                    <li>1. Start with PYNQ-Z2 (€275-320)</li>
+                    <li>2. Use pre-built SD card images</li>
+                    <li>3. Follow PYNQ tutorials</li>
+                    <li>4. Build simple object detection</li>
+                  </ol>
+                </div>
+                
+                <div className="bg-white/20 backdrop-blur-sm p-6 rounded-xl">
+                  <h3 className="text-xl font-bold mb-3">For Students</h3>
+                  <ol className="text-sm space-y-2">
+                    <li>1. Choose Ultra96-V2 (€230-280)</li>
+                    <li>2. Learn Vitis AI basics</li>
+                    <li>3. Complete 2-3 projects</li>
+                    <li>4. Explore custom accelerators</li>
+                  </ol>
+                </div>
+                
+                <div className="bg-white/20 backdrop-blur-sm p-6 rounded-xl">
+                  <h3 className="text-xl font-bold mb-3">For Professionals</h3>
+                  <ol className="text-sm space-y-2">
+                    <li>1. Start with Kria KV260 (€280-370)</li>
+                    <li>2. Master Vitis AI stack</li>
+                    <li>3. Deploy production models</li>
+                    <li>4. Scale to Alveo for data center</li>
+                  </ol>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="mt-12 pt-8 border-t border-gray-300 text-center text-gray-600">
+              <p className="mb-4">
+                <strong>Complete FPGA AI Boards Guide 2025</strong> • Comprehensive reference of all FPGA boards with AI capabilities
+              </p>
+              <p className="text-sm">
+                Includes {boardsWithImages.length} boards from {new Set(boardsWithImages.map(b => b.vendor)).size} different vendors and {frameworks.length} AI frameworks.
+                All prices in EUR for European market (2025). AI capability assessment based on official documentation,
+                available toolchains, and real-world deployment examples.
+              </p>
+              <p className="text-sm mt-2">
+                <i className="fas fa-exclamation-circle mr-1"></i>
+                This is the most complete public reference of AI-capable FPGA boards available.
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<FPGAGuide />);
+  </script>
+</body>
+</html>
