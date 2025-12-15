@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>EduFPGA-AI — Learn AI on FPGA</title>
+  <meta name="description" content="Educational platform and framework guide for learning AI on FPGA hardware. Includes background, platforms, workflows, benefits, challenges, and future directions." />
+  <style>
+    :root{--bg:#0f1724;--card:#0b1220;--accent:#06b6d4;--muted:#9aa4b2;--glass: rgba(255,255,255,0.03)}
+    *{box-sizing:border-box}
+    body{font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial; margin:0; background:linear-gradient(180deg,#071022 0%, #071827 100%); color:#e6eef6; -webkit-font-smoothing:antialiased}
+    header{display:flex;gap:18px;align-items:center;padding:22px 28px;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .mark{width:52px;height:52px;border-radius:10px;background:linear-gradient(135deg,#06b6d4,#4f46e5);display:flex;align-items:center;justify-content:center;font-weight:700}
+    nav{margin-left:auto}
+    nav a{color:var(--muted);text-decoration:none;margin-left:14px}
+    .hero{max-width:1100px;margin:28px auto;padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);border-radius:12px}
+    .grid{display:grid;grid-template-columns:320px 1fr;gap:20px}
+    aside{padding:18px;background:var(--card);border-radius:10px}
+    main{padding:18px}
+    h1{margin:0;font-size:22px}
+    h2{font-size:18px;margin:12px 0}
+    .toc a{display:block;padding:8px 10px;border-radius:6px;color:var(--muted);text-decoration:none}
+    .toc a:hover{background:var(--glass);color:#fff}
+    .section{margin-bottom:18px;padding:16px;border-radius:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+    .card{padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
+    pre{background:#051020;padding:12px;border-radius:6px;overflow:auto;font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono",monospace}
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);font-size:13px;color:var(--muted)}
+    .workflow-steps{display:flex;flex-direction:column;gap:12px}
+    .step{display:flex;gap:12px;align-items:flex-start}
+    .step .num{min-width:36px;height:36px;border-radius:8px;background:#071b2a;color:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;border:1px solid rgba(6,182,212,0.12)}
+    .footer{max-width:1100px;margin:22px auto;text-align:center;color:var(--muted);padding:12px}
+    .resources{display:flex;gap:10px;flex-wrap:wrap}
+    button.cta{background:linear-gradient(90deg,#06b6d4,#4f46e5);border:none;padding:10px 14px;border-radius:8px;color:#04121a;font-weight:700;cursor:pointer}
+    @media (max-width:900px){.grid{grid-template-columns:1fr;}.logo .mark{width:44px;height:44px}}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="mark">EF</div>
+      <div>
+        <div style="font-weight:700">EduFPGA-AI</div>
+        <div style="font-size:12px;color:var(--muted)">Learn AI & deploy on FPGA hardware</div>
+      </div>
+    </div>
+    <nav>
+      <a href="#background">Background</a>
+      <a href="#platforms">Platforms</a>
+      <a href="#workflow">Workflow</a>
+      <a href="#benefits">Benefits</a>
+      <a href="#future">Future</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div class="grid">
+      <aside>
+        <div class="card">
+          <h2>Quick Links</h2>
+          <div class="toc">
+            <a href="#background">Background: FPGA & AI</a>
+            <a href="#platforms">Educational Platforms & Frameworks</a>
+            <a href="#workflow">Workflow Example</a>
+            <a href="#benefits">Benefits & Challenges</a>
+            <a href="#future">Future Directions</a>
+            <a href="#lessons">Sample Lesson Plan</a>
+            <a href="#resources">Resources</a>
+          </div>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="card">
+          <h2>Audience</h2>
+          <p class="pill">Students • Educators • Lab Instructors • Hobbyists</p>
+          <h2 style="margin-top:12px">Use Cases</h2>
+          <ul style="margin:8px 0;padding-left:16px;color:var(--muted)">
+            <li>Hands-on FPGA labs</li>
+            <li>AI model compression classes</li>
+            <li>Embedded systems coursework</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main>
+        <section id="background" class="section">
+          <h1>Background — FPGA & AI Deployment</h1>
+          <p style="color:var(--muted)">Field-Programmable Gate Arrays (FPGAs) are reconfigurable hardware devices ideal for accelerating inference of neural networks in power- and latency-sensitive environments. For education, FPGAs offer students visibility into hardware-software co-design: you can inspect datapaths, resource use (LUTs, BRAM, DSP), and how quantization/pruning affects implementation.</p>
+
+          <div style="margin-top:12px" class="card">
+            <h2>Core concepts to teach</h2>
+            <ul style="padding-left:16px;color:var(--muted)">
+              <li>FPGA architecture basics (logic cells, DSPs, BRAMs, interconnect)</li>
+              <li>Quantization (fixed-point, integer formats) and its impact</li>
+              <li>Model compression: pruning, knowledge distillation</li>
+              <li>High-Level Synthesis (HLS) vs RTL implementation</li>
+              <li>Toolflow: from trained model to bitstream</li>
+            </ul>
+          </div>
+        </section>
+
+        <section id="platforms" class="section">
+          <h1>Popular Educational Platforms & Frameworks</h1>
+
+          <div class="card">
+            <h2>PYNQ</h2>
+            <p style="color:var(--muted)">Python productivity layer for Xilinx Zynq platforms — great for live labs, Jupyter notebooks, and quick hardware access with Python APIs.</p>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="card">
+            <h2>Vitis / Vitis AI</h2>
+            <p style="color:var(--muted)">Vendor toolchain (Xilinx) for compiling, quantizing and deploying DNNs to Xilinx FPGAs. Useful for demonstrating practical deployment and performance profiling.</p>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="card">
+            <h2>FINN</h2>
+            <p style="color:var(--muted)">A research-to-deployment framework for fast, quantized neural networks on FPGAs. Excellent for teaching quantized inference and bit-precise architectures.</p>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="card">
+            <h2>hls4ml</h2>
+            <p style="color:var(--muted)">Bridges ML models (Keras, PyTorch) to FPGA-friendly HLS code — very useful in physics and embedded ML education.</p>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="card">
+            <h2>Intel OpenVINO / oneAPI</h2>
+            <p style="color:var(--muted)">Intel's stack for accelerating inference — mentionable for lectures comparing vendor approaches across FPGA vendors.</p>
+          </div>
+
+        </section>
+
+        <section id="workflow" class="section">
+          <h1>Workflow Example — From Model to FPGA (for education)</h1>
+
+          <div class="workflow-steps card">
+            <div class="step">
+              <div class="num">1</div>
+              <div>
+                <strong>Train & validate a small model</strong>
+                <div style="color:var(--muted)">Start with a compact CNN on MNIST or CIFAR-10 in PyTorch/TensorFlow. Keep architecture small for quick synthesis.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="num">2</div>
+              <div>
+                <strong>Convert to an intermediate format</strong>
+                <div style="color:var(--muted)">Export to ONNX or a framework-specific format supported by your FPGA toolchain.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="num">3</div>
+              <div>
+                <strong>Quantize & optimize</strong>
+                <div style="color:var(--muted)">Use quantization-aware training or post-training quantization to reduce precision (8-bit, 4-bit or binary). Tools: Vitis AI quantizer, FINN, or hls4ml quantizers.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="num">4</div>
+              <div>
+                <strong>HLS / Synthesis</strong>
+                <div style="color:var(--muted)">Use HLS (e.g., Vivado HLS) or the vendor compilation flow to convert the optimized network to RTL/bitstream. For teaching, show resource estimates and timing reports.</div>
+              </div>
+            </div>
+
+            <div class="step">
+              <div class="num">5</div>
+              <div>
+                <strong>Deploy & measure</strong>
+                <div style="color:var(--muted)">Run inference on the board (PYNQ or custom board), measure latency, throughput and power. Compare to CPU/GPU baselines.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="margin-top:12px">
+            <h2>Minimal code example — Convert PyTorch model to ONNX</h2>
+            <pre><code># python
+import torch
+# model = your_trained_model
+x = torch.randn(1,3,32,32)
+torch.onnx.export(model, x, "model.onnx", opset_version=11)
+</code></pre>
+          </div>
+
+        </section>
+
+        <section id="benefits" class="section">
+          <h1>Benefits & Challenges</h1>
+
+          <div class="card">
+            <h2>Benefits</h2>
+            <ul style="padding-left:16px;color:var(--muted)">
+              <li>Deep understanding of HW-SW co-design</li>
+              <li>Hands-on skills in quantization and resource budgeting</li>
+              <li>Exposure to industry toolchains and deployment constraints</li>
+            </ul>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="card">
+            <h2>Additional Educational Advantages</h2>
+            <p style="color:var(--muted);margin-bottom:12px">The adoption of EduFPGA-AI platforms in curricula offers multifaceted benefits:</p>
+            <ul style="padding-left:16px;color:var(--muted)">
+              <li><strong>Democratization of Hardware Knowledge:</strong> They lower the barrier to entry, allowing computer science and AI students with little hardware background to engage with FPGA technology.</li>
+              <li><strong>Deepened Conceptual Understanding:</strong> Hands-on experience with quantization, parallelism, and resource constraints moves students beyond abstract AI theory. They learn firsthand how algorithmic choices directly impact hardware efficiency.</li>
+              <li><strong>Bridging the Software–Hardware Divide:</strong> These platforms foster a systems-thinking mindset, encouraging students to consider the entire stack from algorithm to silicon, a highly valuable skill in the industry.</li>
+              <li><strong>Stimulation of Innovation:</strong> By making FPGA-AI accessible, educators can empower students to prototype novel accelerator architectures and explore research ideas that would otherwise be infeasible.</li>
+            </ul>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="card">
+            <h2>Challenges</h2>
+            <ul style="padding-left:16px;color:var(--muted)">
+              <li>Steep toolchain learning curve (Vivado, Vitis)</li>
+              <li>Long synthesis times for full designs — design small for labs</li>
+              <li>Hardware availability and reproducibility across students</li>
+            </ul>
+          </div>
+
+        </section>
+
+        <section id="future" class="section">
+          <h1>Future Directions</h1>
+          <p style="color:var(--muted)">Where the field is going and what to include in forward-looking curricula:</p>
+          <ul style="padding-left:16px;color:var(--muted)">
+            <li>Automated hardware-aware neural architecture search (NAS) targeting FPGAs</li>
+            <li>Better open-source toolchains and education-first images (e.g., PYNQ+notebooks)</li>
+            <li>Co-simulation and virtual FPGA labs for scale and reproducibility</li>
+            <li>Edge-cloud workflows combining FPGA inference with cloud retraining</li>
+          </ul>
+        </section>
+
+        <section id="lessons" class="section">
+          <h1>Sample Lesson Plan</h1>
+          <ol style="color:var(--muted)">
+            <li>Lecture: FPGA architecture and ML basics (1.5 hr)</li>
+            <li>Hands-on: Running a prebuilt model on PYNQ (2 hr lab)</li>
+            <li>Workshop: Quantize a model with Vitis AI or hls4ml (2 hr)</li>
+            <li>Project assignment: Implement a tiny classifier and measure HW metrics (2 weeks)</li>
+          </ol>
+        </section>
+
+        <section id="resources" class="section">
+          <h1>Resources & Starter Kits</h1>
+          <div class="resources">
+            <div class="card" style="min-width:200px">
+              <strong>PYNQ Image + Notebooks</strong>
+              <div style="color:var(--muted);margin-top:8px">Great for rapid labs on Zynq boards.</div>
+            </div>
+
+            <div class="card" style="min-width:200px">
+              <strong>Vitis AI Tutorials</strong>
+              <div style="color:var(--muted);margin-top:8px">Vendor guides for quantization and deployment.</div>
+            </div>
+
+            <div class="card" style="min-width:200px">
+              <strong>FINN + hls4ml</strong>
+              <div style="color:var(--muted);margin-top:8px">Research frameworks for teaching quantized and HLS flows.</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px" class="card">
+            <h2>Downloadable Materials (placeholders)</h2>
+            <p style="color:var(--muted)">Use these starter artifacts in labs: model.onnx, example Jupyter notebooks, HLS templates, board images.</p>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="cta" onclick="alert('Exported package would download in a real deployment.')">Download Starter Kit</button>
+              <button class="cta" onclick="alert('Open hosted lab in a real deployment.')">Open Hosted Lab</button>
+            </div>
+          </div>
+
+        </section>
+
+        <section id="tutorials" class="section">
+          <h1>Tutorial Videos</h1>
+          <p style="color:var(--muted)">Watch these educational videos to learn AI deployment on FPGA hardware. Click on any video to play.</p>
+          
+          <div style="height:12px"></div>
+
+          <div class="card">
+            <h2>🎥 Introduction to AI on FPGAs</h2>
+            <p style="color:var(--muted);margin-bottom:12px">Learn the fundamentals of FPGA architecture and why they're ideal for AI acceleration. Perfect for beginners.</p>
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;background:#000">
+              <iframe 
+                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" 
+                src="https://www.youtube.com/embed/iHg0mmIg0UU" 
+                title="Introduction to AI on FPGAs" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+            <div style="margin-top:8px;font-size:13px;color:var(--muted)">Duration: 15 minutes • Level: Beginner</div>
+          </div>
+
+          <div style="height:16px"></div>
+
+          <div class="card">
+            <h2>🎥 PYNQ Tutorial: Deploy Your First Neural Network</h2>
+            <p style="color:var(--muted);margin-bottom:12px">Hands-on walkthrough of deploying a CNN on PYNQ using Python. Follow along with your own board!</p>
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;background:#000">
+              <iframe 
+                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" 
+                src="https://www.youtube.com/embed/Ub6-dgDJhYs" 
+                title="PYNQ Neural Network Deployment" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+            <div style="margin-top:8px;font-size:13px;color:var(--muted)">Duration: 22 minutes • Level: Intermediate</div>
+          </div>
+
+          <div style="height:16px"></div>
+
+          <div class="card">
+            <h2>🎥 Advanced: Quantization and Optimization Techniques</h2>
+            <p style="color:var(--muted);margin-bottom:12px">Deep dive into quantization strategies, model compression, and achieving optimal performance on FPGA hardware.</p>
+            <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;background:#000">
+              <iframe 
+                style="position:absolute;top:0;left:0;width:100%;height:100%;border:0" 
+                src="https://www.youtube.com/embed/v7c8hYqS0Qk" 
+                title="FPGA Quantization and Optimization" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+              </iframe>
+            </div>
+            <div style="margin-top:8px;font-size:13px;color:var(--muted)">Duration: 28 minutes • Level: Advanced</div>
+          </div>
+
+          <div style="height:16px"></div>
+
+          <div class="card">
+            <h2>Additional Learning Resources</h2>
+            <ul style="padding-left:16px;color:var(--muted)">
+              <li>📚 FPGA basics for beginners documentation</li>
+              <li>💻 GitHub repositories with example projects</li>
+              <li>🔗 Community forums and discussion boards</li>
+              <li>📊 Performance benchmarking tools and datasets</li>
+            </ul>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div style="max-width:1100px;margin:0 auto">
+      <div style="margin-bottom:8px">Made with ♥ for educators. Adapt, expand and run in your classroom.</div>
+      <div style="font-size:13px;color:var(--muted)">Tip: Open this file in a modern browser and use the Quick Links to jump between sections.</div>
+    </div>
+  </div>
+
+</body>
+</html>
